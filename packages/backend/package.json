@@ -9,6 +9,7 @@
     "./conex": "./convex/**.ts"
   },
   "devDependencies": {
+    "@types/node": "^20.19.9",
     "@workspace/typescript-config": "workspace:*",
     "typescript": "^5.9.2"
   },
