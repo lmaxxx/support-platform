@@ -21,12 +21,18 @@ coverage
 # Vercel
 .vercel
 
+#IDEs
+.idea
+.vscode
+
 # Build Outputs
 .next/
 out/
 build
 dist
 
+#Sentry
+.env.sentry-build-plugin
 
 # Debug
 npm-debug.log*
