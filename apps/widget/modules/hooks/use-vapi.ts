@@ -15,7 +15,7 @@ export function useVapi() {
 
   useEffect(() => {
     // only for testing Vapi
-    const vapiInstance = new Vapi("9ef22dd8-e1fd-4b2e-b396-205615db8527")
+    const vapiInstance = new Vapi("")
     setVapi(vapiInstance)
 
     vapiInstance.on("call-start", () => {
@@ -65,7 +65,7 @@ export function useVapi() {
 
     if(vapi) {
       // only for testing Vapi
-      vapi.start("e8af319b-8b9c-4a04-abe4-e07d0830374d");
+      vapi.start("");
     }
   }
 

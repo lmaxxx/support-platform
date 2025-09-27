@@ -1,7 +1,5 @@
 "use client"
 
-import {useMutation, useQuery} from "convex/react";
-import {api} from "@workspace/backend/convex/_generated/api";
 import {Button} from "@workspace/ui/components/button";
 import {useVapi} from "@/modules/hooks/use-vapi";
 
