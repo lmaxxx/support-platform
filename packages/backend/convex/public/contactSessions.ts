@@ -27,14 +27,31 @@ export const create = mutation({
     const now = Date.now()
     const expiresAt = now + SESSION_DURATION_MS;
 
-    const contactSessionId = await ctx.db.insert("contactSessions", {
+    return await ctx.db.insert("contactSessions", {
       name: args.name,
       email: args.email,
       organizationId: args.organizationId,
       expiresAt,
       metadata: args.metadata,
-    })
+    });
+  }
+})
 
-    return contactSessionId;
+export const validate = mutation({
+  args: {
+    contactSessionId: v.id("contactSessions")
+  },
+  handler: async (ctx, args) => {
+    const contactSession = await ctx.db.get(args.contactSessionId)
+
+    if(!contactSession) {
+      return {valid: false, reason: "Contact session not found"};
+    }
+
+    if(contactSession.expiresAt < Date.now()) {
+      return {valid: false, reason: "Contact session expired"};
+    }
+
+    return  {valid: true};
   }
 })
