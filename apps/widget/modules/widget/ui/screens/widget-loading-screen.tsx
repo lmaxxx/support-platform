@@ -92,7 +92,6 @@ export default function WidgetLoadingScreen({organizationId}: Props) {
     setLoadingMessage("Validating session...");
 
     validateContactSession({contactSessionId}).then((result) => {
-      console.log(result, contactSessionId)
       setSessionValid(result.valid);
       setStep("done")
     })
@@ -110,7 +109,6 @@ export default function WidgetLoadingScreen({organizationId}: Props) {
 
     const hasValidSession = contactSessionId && sessionValid;
 
-    console.log(contactSessionId, sessionValid)
     setScreen(hasValidSession ? "selection" : "auth")
   }, [step, contactSessionId, sessionValid, setScreen]);
 

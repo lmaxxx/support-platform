@@ -9,6 +9,8 @@ import WidgetAuthScreen from "@/modules/widget/ui/screens/widget-auth-screen";
 import {screenAtom} from "@/modules/widget/atoms/widget-atoms";
 import WidgetErrorScreen from "@/modules/widget/ui/screens/widget-error-screen";
 import WidgetLoadingScreen from "@/modules/widget/ui/screens/widget-loading-screen";
+import WidgetSelectionScreen from "@/modules/widget/ui/screens/widget-selection-screen";
+import WidgetChatScreen from "@/modules/widget/ui/screens/widget-chat-screen";
 
 type Props = {
   organizationId: string | null;
@@ -23,16 +25,14 @@ export default function WidgetView({organizationId}: Props) {
     auth: <WidgetAuthScreen/>,
     voice: <p>voice</p>,
     inbox: <p>inbox</p>,
-    selection: <p>selection</p>,
-    chat: <p>chat</p>,
+    selection: <WidgetSelectionScreen/> ,
+    chat: <WidgetChatScreen/>,
     contact: <p>contact</p>,
   }
 
   return (
     <main className={"flex min-h-screen h-full w-full flex-col overflow-hidden rounded-xl border bg-muted"}>
       {screenComponents[screen]}
-      {/*<WidgetAuthScreen/>*/}
-      {/*<WidgetFooter/>*/}
     </main>
   )
 }
