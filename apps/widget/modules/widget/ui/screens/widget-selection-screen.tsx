@@ -13,6 +13,7 @@ import {Button} from "@workspace/ui/components/button";
 import {useMutation} from "convex/react";
 import {api} from "@workspace/backend/convex/_generated/api";
 import {useState} from "react";
+import WidgetFooter from "@/modules/widget/ui/components/widget-footer";
 
 export default function WidgetSelectionScreen() {
   const setScreen = useSetAtom(screenAtom);
@@ -78,6 +79,7 @@ export default function WidgetSelectionScreen() {
           <ChevronRightIcon/>
         </Button>
       </div>
+      <WidgetFooter/>
     </>
   )
 }
