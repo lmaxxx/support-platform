@@ -11,6 +11,7 @@ import WidgetErrorScreen from "@/modules/widget/ui/screens/widget-error-screen";
 import WidgetLoadingScreen from "@/modules/widget/ui/screens/widget-loading-screen";
 import WidgetSelectionScreen from "@/modules/widget/ui/screens/widget-selection-screen";
 import WidgetChatScreen from "@/modules/widget/ui/screens/widget-chat-screen";
+import WidgetInboxScreen from "@/modules/widget/ui/screens/widget-inbox-screen";
 
 type Props = {
   organizationId: string | null;
@@ -24,7 +25,7 @@ export default function WidgetView({organizationId}: Props) {
     loading: <WidgetLoadingScreen organizationId={organizationId}/>,
     auth: <WidgetAuthScreen/>,
     voice: <p>voice</p>,
-    inbox: <p>inbox</p>,
+    inbox: <WidgetInboxScreen/>,
     selection: <WidgetSelectionScreen/> ,
     chat: <WidgetChatScreen/>,
     contact: <p>contact</p>,
