@@ -39,7 +39,7 @@ export function useVapi() {
     })
 
     vapiInstance.on("error", (error) => {
-      console.log("VAPI ERROR", error)
+      console.error("VAPI ERROR", error)
       setIsConnecting(false)
     })
 

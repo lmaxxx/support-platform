@@ -4,6 +4,63 @@ import {components, internal} from "../_generated/api";
 import {supportAgent} from "../system/ai/agents/supportAgent";
 import {paginationOptsValidator} from "convex/server";
 import {saveMessage} from "@convex-dev/agent";
+import {generateText} from "ai";
+import {anthropic} from "@ai-sdk/anthropic";
+
+export const enhanceResponse = action({
+  args: {
+    prompt: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+
+    if (!identity) {
+      throw new ConvexError({
+        code: "UNAUTHORIZED",
+        message: "Identity not found"
+      })
+    }
+
+    const organizationId = identity.org_id as string
+
+    if (!organizationId) {
+      throw new ConvexError({
+        code: "NOT_FOUND",
+        message: "Organization not found"
+      })
+    }
+
+    const response = await generateText({
+      model: anthropic("claude-3-5-haiku-latest"),
+      messages: [
+        {
+          role: "system",
+          content: `
+            You are a message enhancement assistant helping customers communicate more effectively with support teams.
+            Your task is to refine the customer's message to make it clearer, more professional, and easier for support agents to understand and resolve.
+            Guidelines:
+            - Preserve the customer's original intent, concerns, and all key details
+            - Improve clarity and structure without changing the meaning
+            - Use professional yet friendly tone appropriate for customer support
+            - Organize information logically (issue description, steps taken, desired outcome)
+            - Fix grammar, spelling, and unclear phrasing
+            - Keep the message concise but complete
+            - do not use any variables.
+            
+            F.E wdym -> what do you mean? etc
+            
+            Important: Return ONLY the enhanced message text. No explanations, suggestions, or alternatives. The output will be sent directly to the support team on behalf of the customer.`
+        },
+        {
+          role: "user",
+          content: args.prompt
+        }
+      ]
+    })
+
+    return response.text
+  }
+})
 
 export const create = mutation({
   args: {
@@ -13,16 +70,16 @@ export const create = mutation({
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
 
-    if(!identity) {
+    if (!identity) {
       throw new ConvexError({
-        code: "NOT_FOUND",
+        code: "UNAUTHORIZED",
         message: "Identity not found"
       })
     }
 
     const organizationId = identity.org_id as string
 
-    if(!organizationId) {
+    if (!organizationId) {
       throw new ConvexError({
         code: "NOT_FOUND",
         message: "Organization not found"
@@ -31,7 +88,7 @@ export const create = mutation({
 
     const conversation = await ctx.db.get(args.conversationId)
 
-    if(!conversation) {
+    if (!conversation) {
       throw new ConvexError({
         code: "NOT_FOUND",
         message: "Conversation not found"
@@ -45,7 +102,7 @@ export const create = mutation({
       })
     }
 
-    if(conversation.status === "resolved") {
+    if (conversation.status === "resolved") {
       throw new ConvexError({
         code: "BAD_REQUEST",
         message: "Conversation resolved"
@@ -53,6 +110,14 @@ export const create = mutation({
     }
 
     //TODO: implement subscription check
+
+    // Only update if status is still "unresolved" (atomic operation)
+    const updatedConversation = await ctx.db.get(args.conversationId);
+    if (updatedConversation?.status === "unresolved") {
+      await ctx.db.patch(args.conversationId, {
+        status: "escalated",
+      });
+    }
 
     await saveMessage(ctx, components.agent, {
       threadId: conversation.threadId,
@@ -73,16 +138,16 @@ export const getMany = query({
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
 
-    if(!identity) {
+    if (!identity) {
       throw new ConvexError({
-        code: "NOT_FOUND",
+        code: "UNAUTHORIZED",
         message: "Identity not found"
       })
     }
 
     const organizationId = identity.org_id as string
 
-    if(!organizationId) {
+    if (!organizationId) {
       throw new ConvexError({
         code: "NOT_FOUND",
         message: "Organization not found"
@@ -94,11 +159,11 @@ export const getMany = query({
       .withIndex("by_thread_id", (q) => q.eq("threadId", args.threadId))
       .unique()
 
-    if(!conversation) {
-        throw new ConvexError({
-          code: "NOT_FOUND",
-          message: "Conversation not found"
-        })
+    if (!conversation) {
+      throw new ConvexError({
+        code: "NOT_FOUND",
+        message: "Conversation not found"
+      })
     }
 
     if (conversation.organizationId !== organizationId) {
