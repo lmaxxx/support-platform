@@ -19,7 +19,7 @@ export const updateStatus = mutation({
 
     if(!identity) {
       throw new ConvexError({
-        code: "NOT_FOUND",
+        code: "UNAUTHORIZED",
         message: "Identity not found"
       })
     }
@@ -63,7 +63,7 @@ export const getOne = query({
 
     if(!identity) {
       throw new ConvexError({
-        code: "NOT_FOUND",
+        code: "UNAUTHORIZED",
         message: "Identity not found"
       })
     }
@@ -124,7 +124,7 @@ export const getMany = query({
 
     if(!identity) {
       throw new ConvexError({
-        code: "NOT_FOUND",
+        code: "UNAUTHORIZED",
         message: "Identity not found"
       })
     }

@@ -16,7 +16,7 @@ export const enhanceResponse = action({
 
     if (!identity) {
       throw new ConvexError({
-        code: "NOT_FOUND",
+        code: "UNAUTHORIZED",
         message: "Identity not found"
       })
     }
@@ -72,7 +72,7 @@ export const create = mutation({
 
     if (!identity) {
       throw new ConvexError({
-        code: "NOT_FOUND",
+        code: "UNAUTHORIZED",
         message: "Identity not found"
       })
     }
@@ -111,6 +111,14 @@ export const create = mutation({
 
     //TODO: implement subscription check
 
+    // Only update if status is still "unresolved" (atomic operation)
+    const updatedConversation = await ctx.db.get(args.conversationId);
+    if (updatedConversation?.status === "unresolved") {
+      await ctx.db.patch(args.conversationId, {
+        status: "escalated",
+      });
+    }
+
     await saveMessage(ctx, components.agent, {
       threadId: conversation.threadId,
       agentName: identity.familyName,
@@ -132,7 +140,7 @@ export const getMany = query({
 
     if (!identity) {
       throw new ConvexError({
-        code: "NOT_FOUND",
+        code: "UNAUTHORIZED",
         message: "Identity not found"
       })
     }
