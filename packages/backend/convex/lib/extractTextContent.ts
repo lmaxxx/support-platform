@@ -7,7 +7,7 @@ import {generateText} from "ai";
 const AI_MODELS = {
   image: anthropic.languageModel("claude-4-sonnet-20250514"),
   pdf: anthropic.languageModel("claude-4-sonnet-20250514"),
-  html: anthropic.languageModel("claude-3-5-haiku-latest")
+  html: anthropic.languageModel("claude-4-sonnet-20250514")
 } as const;
 
 const SUPPORTED_IMAGE_TYPES = [
