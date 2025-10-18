@@ -1,6 +1,5 @@
 "use client"
 
-import {Button} from "@workspace/ui/components/button";
 import WidgetView from "@/modules/widget/ui/views/widget-view";
 import {use} from "react";
 
