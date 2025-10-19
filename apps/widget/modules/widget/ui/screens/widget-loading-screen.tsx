@@ -9,7 +9,7 @@ import {
   screenAtom
 } from "@/modules/widget/atoms/widget-atoms";
 import {useAtom, useAtomValue, useSetAtom} from "jotai";
-import {LoaderIcon} from "lucide-react";
+import {Loader2Icon} from "lucide-react";
 import {useEffect, useState} from "react";
 import {useAction, useMutation} from "convex/react";
 import {api} from "@workspace/backend/convex/_generated/api";
@@ -125,7 +125,7 @@ export default function WidgetLoadingScreen({organizationId}: Props) {
         </div>
       </WidgetHeader>
       <div className={"flex flex-1 items-center justify-center flex-col gap-y-4 p-4 text-muted-foreground"}>
-        <LoaderIcon className={"animate-spin"}/>
+        <Loader2Icon className={"animate-spin"}/>
         <p className={"text-sm"}>
           {loadingMessage || "Loading..."}
         </p>

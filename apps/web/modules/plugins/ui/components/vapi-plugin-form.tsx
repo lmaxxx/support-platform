@@ -16,7 +16,7 @@ import {Form, FormControl, FormField, FormItem, FormMessage} from "@workspace/ui
 import {Label} from "@workspace/ui/components/label";
 import {Input} from "@workspace/ui/components/input";
 import {Button} from "@workspace/ui/components/button";
-import {LoaderIcon} from "lucide-react";
+import {Loader2Icon} from "lucide-react";
 import React, {useEffect} from "react";
 
 const formSchema = z.object({
@@ -108,7 +108,7 @@ export default function VapiPluginForm({open, setOpen}: any) {
                 type="submit"
                 disabled={form.formState.isSubmitting}
               >
-                {form.formState.isSubmitting && <LoaderIcon className={"animate-spin"}/>}
+                {form.formState.isSubmitting && <Loader2Icon className={"animate-spin"}/>}
                 {form.formState.isSubmitting ? "Connecting..." : "Connect"}
               </Button>
             </DialogFooter>
