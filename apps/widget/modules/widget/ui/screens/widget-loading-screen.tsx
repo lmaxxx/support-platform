@@ -6,7 +6,7 @@ import {
   errorMessageAtom,
   loadingMessageAtom,
   organizationIdAtom,
-  screenAtom, widgetSettingsAtom
+  screenAtom, vapiSecretsAtom, widgetSettingsAtom
 } from "@/modules/widget/atoms/widget-atoms";
 import {useAtom, useAtomValue, useSetAtom} from "jotai";
 import {Loader2Icon} from "lucide-react";
@@ -29,6 +29,7 @@ export default function WidgetLoadingScreen({organizationId}: Props) {
   const setOrganizationId = useSetAtom(organizationIdAtom);
   const [loadingMessage, setLoadingMessage] = useAtom(loadingMessageAtom);
   const setScreen = useSetAtom(screenAtom);
+  const setVapiSecrets = useSetAtom(vapiSecretsAtom)
 
   const contactSessionId = useAtomValue(contactSessionIdAtomFamily(organizationId || ""))
 
@@ -118,9 +119,30 @@ export default function WidgetLoadingScreen({organizationId}: Props) {
 
     if(widgetSettings !== undefined && organizationId) {
       setWidgetSettings(widgetSettings);
-      setStep("done")
+      setStep("vapi")
     }
   }, [step, widgetSettings, setStep, setWidgetSettings, setLoadingMessage]);
+
+  // Step 4: Load Vapi secrets (Optional)
+  const getVapiSecrets = useAction(api.public.secrets.getVapiSecrets)
+
+  useEffect(() => {
+    if(step !== "vapi" || !organizationId) {
+      return;
+    }
+
+    setLoadingMessage("Loading voice features...");
+    getVapiSecrets({organizationId})
+      .then(secrets => {
+        setVapiSecrets(secrets)
+      })
+      .catch(() => {
+        setVapiSecrets(null)
+      })
+      .finally(() => {
+        setStep("done")
+      })
+  }, [step, organizationId, getVapiSecrets, setVapiSecrets, setLoadingMessage, setStep]);
 
   useEffect(() => {
     if (step !== "done") {
