@@ -71,7 +71,7 @@ export default function VapiFormFields({form}: Props) {
                 <SelectItem value={"none"}>None</SelectItem>
                 {
                   phoneNumbers.map(phone => (
-                    <SelectItem key={phone.id} value={phone.id}>
+                    <SelectItem key={phone.id} value={phone.number || ""}>
                       {phone.number || "Unknown"} -{" "}
                       {phone.name || "Unnamed"}
                     </SelectItem>
