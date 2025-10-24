@@ -13,6 +13,7 @@ import WidgetSelectionScreen from "@/modules/widget/ui/screens/widget-selection-
 import WidgetChatScreen from "@/modules/widget/ui/screens/widget-chat-screen";
 import WidgetInboxScreen from "@/modules/widget/ui/screens/widget-inbox-screen";
 import WidgetVoiceScreen from "@/modules/widget/ui/screens/widget-voice-screen";
+import WidgetContactScreen from "@/modules/widget/ui/screens/widget-contact-screen";
 
 type Props = {
   organizationId: string | null;
@@ -29,11 +30,11 @@ export default function WidgetView({organizationId}: Props) {
     inbox: <WidgetInboxScreen/>,
     selection: <WidgetSelectionScreen/> ,
     chat: <WidgetChatScreen/>,
-    contact: <p>contact</p>,
+    contact: <WidgetContactScreen/>,
   }
 
   return (
-    <main className={"flex min-h-screen h-full w-full flex-col overflow-hidden rounded-xl border bg-muted"}>
+    <main className={"flex h-full w-full flex-col overflow-hidden rounded-xl border bg-muted"}>
       {screenComponents[screen]}
     </main>
   )
