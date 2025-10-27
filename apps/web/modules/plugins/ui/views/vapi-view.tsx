@@ -54,7 +54,7 @@ export default function VapiView() {
         <div className={"mx-auto w-full max-w-screen-md"}>
           <div className={"space-y-2"}>
             <h1 className={"text-2xl md:text-4xl"}>Vapi Plugin</h1>
-            <p>Connect Vapi to enable AI voice calls and phone support</p>
+            <p className={"text-muted-foreground"}>Connect Vapi to enable AI voice calls and phone support</p>
           </div>
           <div className={"mt-8"}>
             {

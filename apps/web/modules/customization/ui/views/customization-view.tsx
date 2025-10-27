@@ -28,7 +28,7 @@ export default function CustomizationView() {
       <div className={"max-w-screen-md mx-auto w-full"}>
         <div className={"space-y-2"}>
           <h1 className={"text-2xl md:text-4xl"}>Widget Customization</h1>
-          <p>Customize how your chat widget looks and behaves for you customers</p>
+          <p className={"text-muted-foreground"}>Customize how your chat widget looks and behaves for you customers</p>
         </div>
         <div className={"mt-8"}>
           <CustomizationForm
