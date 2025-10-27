@@ -28,6 +28,7 @@ import useInfiniteScroll from "@workspace/ui/hooks/use-infinite-scroll";
 import InfiniteScrollTrigger from "@workspace/ui/components/infinite-scroll-trigger";
 import {cn} from "@workspace/ui/lib/utils";
 import {Skeleton} from "@workspace/ui/components/skeleton";
+import {toast} from "sonner";
 
 type Props = {
   conversationId: Id<"conversations">
@@ -73,7 +74,9 @@ export default function ConversationIdView({conversationId}: Props) {
       const response = await enhanceResponse({prompt: currentValue});
 
       form.setValue("message", response)
-    } catch (error) {
+    } catch (err) {
+      const error = err as { data: { message: string } }
+      toast.error(error.data.message)
       console.error(error)
     } finally {
       setIsEnhancing(false)
