@@ -31,6 +31,18 @@ export const enhanceResponse = action({
       })
     }
 
+    const subscription = await ctx.runQuery(
+      internal.system.subscriptions.getByOrganizationId,
+      { organizationId }
+    )
+
+    if(subscription?.status !== "active") {
+      throw new ConvexError({
+        code: "BAD_REQUEST",
+        message: "Missing subscription"
+      })
+    }
+
     const response = await generateText({
       model: anthropic("claude-4-sonnet-20250514"),
       messages: [
