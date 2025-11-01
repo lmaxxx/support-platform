@@ -15,7 +15,6 @@ export default function IntegrationsDialog({open, onOpenChange, snippet}: Props)
       await navigator.clipboard.writeText(snippet)
       toast.success("Copied!");
     } catch (error) {
-      console.log(error);
       toast.error("Could not copy to clipboard");
     }
   }

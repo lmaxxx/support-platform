@@ -13,6 +13,8 @@ import {Label} from "@workspace/ui/components/label";
 import {Input} from "@workspace/ui/components/input";
 import {Dropzone, DropzoneContent, DropzoneEmptyState} from "@workspace/ui/components/dropzone";
 import {Button} from "@workspace/ui/components/button";
+import {toast} from "sonner";
+import * as Sentry from "@sentry/nextjs";
 
 type Props = {
   open: boolean
@@ -58,7 +60,8 @@ export default function UploadFileDialog({ open  ,onOpenChange, onFileUploaded}:
       onFileUploaded?.()
       handleCancel()
     } catch (error) {
-      console.error(error);
+      Sentry.captureException(error);
+      toast.error("Failed to upload file");
     } finally {
       setIsUploading(false);
     }

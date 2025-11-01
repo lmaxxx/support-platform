@@ -11,6 +11,8 @@ import {
   DialogTitle
 } from "@workspace/ui/components/dialog";
 import {Button} from "@workspace/ui/components/button";
+import {toast} from "sonner";
+import * as Sentry from "@sentry/nextjs";
 
 type Props = {
   open: boolean
@@ -39,7 +41,8 @@ export default function DeleteFileDialog({
       onDelete?.()
       onOpenChange(false)
     } catch (error) {
-      console.error(error);
+      Sentry.captureException(error);
+      toast.error("Failed to delete file");
     } finally {
       setIsDeleting(false);
     }

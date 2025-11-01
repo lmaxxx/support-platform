@@ -29,6 +29,7 @@ import InfiniteScrollTrigger from "@workspace/ui/components/infinite-scroll-trig
 import {cn} from "@workspace/ui/lib/utils";
 import {Skeleton} from "@workspace/ui/components/skeleton";
 import {toast} from "sonner";
+import * as Sentry from "@sentry/nextjs";
 
 type Props = {
   conversationId: Id<"conversations">
@@ -77,7 +78,7 @@ export default function ConversationIdView({conversationId}: Props) {
     } catch (err) {
       const error = err as { data: { message: string } }
       toast.error(error.data.message)
-      console.error(error)
+      Sentry.captureException(error)
     } finally {
       setIsEnhancing(false)
     }
@@ -90,7 +91,8 @@ export default function ConversationIdView({conversationId}: Props) {
       await createMessage({ conversationId, prompt: values.message })
       form.reset()
     } catch (error) {
-      console.error(error)
+      Sentry.captureException(error)
+      toast.error("Failed to send message")
     }
   }
 
@@ -116,7 +118,8 @@ export default function ConversationIdView({conversationId}: Props) {
     try {
       await updateConversationStatus({status: newStatus, conversationId})
     } catch(error) {
-      console.error(error)
+      Sentry.captureException(error)
+      toast.error("Failed to update status")
     } finally {
       setIsUpdatingStatus(false);
     }

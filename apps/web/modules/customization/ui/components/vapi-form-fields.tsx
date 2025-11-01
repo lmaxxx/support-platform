@@ -1,5 +1,5 @@
 import {UseFormReturn} from "react-hook-form";
-import type {FormData as CustomizationFormData} from "@/modules/customization/ui/componenets/customization-form"
+import type {FormData as CustomizationFormData} from "@/modules/customization/ui/components/customization-form"
 import {useVapiAssistants, useVapiPhoneNumbers} from "@/modules/plugins/hooks/use-vapi-data";
 import {FormControl, FormField, FormItem, FormLabel, FormDescription, FormMessage} from "@workspace/ui/components/form";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@workspace/ui/components/select";

@@ -4,7 +4,7 @@ import {useQuery} from "convex/react";
 import {api} from "@workspace/backend/convex/_generated/api";
 import {Loader2Icon} from "lucide-react";
 import React from "react";
-import CustomizationForm from "@/modules/customization/ui/componenets/customization-form";
+import CustomizationForm from "@/modules/customization/ui/components/customization-form";
 
 export default function CustomizationView() {
   const widgetSettings = useQuery(api.private.widgetSettings.getOne);

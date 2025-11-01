@@ -21,8 +21,8 @@ export default function WidgetContactScreen() {
     try {
       await navigator.clipboard.writeText(phoneNumber);
       setCopied(true)
-    } catch (error) {
-      console.error(error);
+    } catch {
+      // Silently fail - clipboard access might be denied
     } finally {
       setTimeout(() => setCopied(false), 2000);
     }

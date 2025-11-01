@@ -19,7 +19,7 @@ import {Input} from "@workspace/ui/components/input";
 import {Textarea} from "@workspace/ui/components/textarea";
 import {Separator} from "@workspace/ui/components/separator";
 import {Button} from "@workspace/ui/components/button";
-import VapiFormFields from "@/modules/customization/ui/componenets/vapi-form-fields";
+import VapiFormFields from "@/modules/customization/ui/components/vapi-form-fields";
 
 export const widgetSettingsSchema = z.object({
   greetMessage: z.string().min(1, "Greeting message is required"),
