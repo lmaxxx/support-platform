@@ -46,8 +46,7 @@ export function useVapi() {
       setIsSpeaking(false)
     })
 
-    vapiInstance.on("error", (error) => {
-      console.error("VAPI ERROR", error)
+    vapiInstance.on("error", () => {
       setIsConnecting(false)
     })
 

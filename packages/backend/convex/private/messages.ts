@@ -108,7 +108,20 @@ export const create = mutation({
       })
     }
 
-    //TODO: implement subscription check
+    // Check subscription status
+    const subscription = await ctx.db
+      .query("subscriptions")
+      .withIndex("by_organization_id", q =>
+        q.eq("organizationId", organizationId)
+      )
+      .unique()
+
+    if (subscription?.status !== "active") {
+      throw new ConvexError({
+        code: "BAD_REQUEST",
+        message: "Active subscription required"
+      })
+    }
 
     // Only update if status is still "unresolved" (atomic operation)
     const updatedConversation = await ctx.db.get(args.conversationId);

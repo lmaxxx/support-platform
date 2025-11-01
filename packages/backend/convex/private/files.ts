@@ -239,8 +239,8 @@ async function convertEntryToPublicFile(ctx: QueryCtx, entry: Entry): Promise<Pu
       if(storageMetadata) {
         fileSize = formatFileSize(storageMetadata.size)
       }
-    } catch (error) {
-      console.error("Failed to get storage metadata: " + error)
+    } catch {
+      // Silently handle - metadata fetch is non-critical
     }
   }
 

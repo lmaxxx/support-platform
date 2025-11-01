@@ -68,8 +68,8 @@ async function validateRequest(req: Request): Promise<WebhookEvent | null> {
 
   try {
     return webhook.verify(payloadString, svixHeaders) as WebhookEvent
-  } catch (error) {
-    console.error(error);
+  } catch {
+    // Invalid webhook signature
     return null;
   }
 }

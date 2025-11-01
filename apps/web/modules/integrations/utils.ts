@@ -4,7 +4,7 @@ import {
   JAVASCRIPT_SCRIPT,
   NEXTJS_SCRIPT,
   REACT_SCRIPT
-} from "@/modules/integrations/constatns";
+} from "@/modules/integrations/constants";
 
 
 export function createScript (integrationId: IntegrationId, organizationId: string) {

@@ -7,7 +7,7 @@ import {Button} from "@workspace/ui/components/button";
 import {CopyIcon} from "lucide-react";
 import {toast} from "sonner";
 import {Separator} from "@workspace/ui/components/separator";
-import {IntegrationId, INTEGRATIONS} from "@/modules/integrations/constatns";
+import {IntegrationId, INTEGRATIONS} from "@/modules/integrations/constants";
 import Image from "next/image"
 import IntegrationsDialog from "@/modules/integrations/ui/components/integrations-dialog";
 import {useState} from "react";
@@ -23,7 +23,6 @@ export default function IntegrationView() {
       await navigator.clipboard.writeText(organization?.id ?? "")
       toast.success("Copied!");
     } catch (error) {
-      console.log(error);
       toast.error("Could not copy to clipboard");
     }
   }
