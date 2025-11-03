@@ -7,29 +7,15 @@ import {saveMessage} from "@convex-dev/agent";
 import {generateText} from "ai";
 import {anthropic} from "@ai-sdk/anthropic";
 import {OPERATOR_MESSAGE_ENHANCEMENT_PROMPT} from "../system/ai/constants";
+import {requireAuth, requireOrganizationMatch} from "../lib/auth";
+import {AI_MODEL} from "../constants";
 
 export const enhanceResponse = action({
   args: {
     prompt: v.string(),
   },
   handler: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity();
-
-    if (!identity) {
-      throw new ConvexError({
-        code: "UNAUTHORIZED",
-        message: "Identity not found"
-      })
-    }
-
-    const organizationId = identity.org_id as string
-
-    if (!organizationId) {
-      throw new ConvexError({
-        code: "NOT_FOUND",
-        message: "Organization not found"
-      })
-    }
+    const { organizationId } = await requireAuth(ctx);
 
     const subscription = await ctx.runQuery(
       internal.system.subscriptions.getByOrganizationId,
@@ -44,7 +30,7 @@ export const enhanceResponse = action({
     }
 
     const response = await generateText({
-      model: anthropic("claude-4-sonnet-20250514"),
+      model: anthropic(AI_MODEL.CLAUDE_SONNET),
       messages: [
         {
           role: "system",
@@ -67,23 +53,7 @@ export const create = mutation({
     conversationId: v.id("conversations")
   },
   handler: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity();
-
-    if (!identity) {
-      throw new ConvexError({
-        code: "UNAUTHORIZED",
-        message: "Identity not found"
-      })
-    }
-
-    const organizationId = identity.org_id as string
-
-    if (!organizationId) {
-      throw new ConvexError({
-        code: "NOT_FOUND",
-        message: "Organization not found"
-      })
-    }
+    const { identity, organizationId } = await requireAuth(ctx);
 
     const conversation = await ctx.db.get(args.conversationId)
 
@@ -94,12 +64,7 @@ export const create = mutation({
       })
     }
 
-    if (conversation.organizationId !== organizationId) {
-      throw new ConvexError({
-        code: "UNAUTHORIZED",
-        message: "Invalid organization ID"
-      })
-    }
+    requireOrganizationMatch(conversation.organizationId, organizationId);
 
     if (conversation.status === "resolved") {
       throw new ConvexError({
@@ -148,23 +113,7 @@ export const getMany = query({
     paginationOpts: paginationOptsValidator
   },
   handler: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity();
-
-    if (!identity) {
-      throw new ConvexError({
-        code: "UNAUTHORIZED",
-        message: "Identity not found"
-      })
-    }
-
-    const organizationId = identity.org_id as string
-
-    if (!organizationId) {
-      throw new ConvexError({
-        code: "NOT_FOUND",
-        message: "Organization not found"
-      })
-    }
+    const { organizationId } = await requireAuth(ctx);
 
     const conversation = await ctx.db
       .query("conversations")
@@ -178,12 +127,7 @@ export const getMany = query({
       })
     }
 
-    if (conversation.organizationId !== organizationId) {
-      throw new ConvexError({
-        code: "UNAUTHORIZED",
-        message: "Invalid organization ID"
-      })
-    }
+    requireOrganizationMatch(conversation.organizationId, organizationId);
 
     return await supportAgent.listMessages(ctx, {
       threadId: args.threadId,

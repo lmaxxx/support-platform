@@ -13,9 +13,9 @@ import {
 import {useAction, useQuery} from "convex/react";
 import {api} from "@workspace/backend/convex/_generated/api";
 import {toUIMessages, useThreadMessages} from "@convex-dev/agent/react";
-import {z} from "zod";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
+import {messageFormSchema, MessageFormValues} from "@workspace/ui/lib/schemas";
 import {AIConversation, AIConversationContent} from "@workspace/ui/components/ai/conversation";
 import {AIMessage, AIMessageContent} from "@workspace/ui/components/ai/message";
 import {AIResponse} from "@workspace/ui/components/ai/response";
@@ -26,12 +26,6 @@ import InfiniteScrollTrigger from "@workspace/ui/components/infinite-scroll-trig
 import DicebearAvatar from "@workspace/ui/components/dicebear-avatar";
 import {useMemo} from "react";
 import {AISuggestion, AISuggestions} from "@workspace/ui/components/ai/suggestion";
-
-const formSchema = z.object({
-  message: z.string().min(1, "Message is required")
-})
-
-type FormType = z.infer<typeof formSchema>;
 
 export default function WidgetChatScreen() {
   const [conversationId, setConversationId] = useAtom(conversationIdAtom)
@@ -64,8 +58,8 @@ export default function WidgetChatScreen() {
     loadSize: 10
   })
 
-  const form = useForm<FormType>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<MessageFormValues>({
+    resolver: zodResolver(messageFormSchema),
     defaultValues: {
       message: ""
     }
@@ -73,7 +67,7 @@ export default function WidgetChatScreen() {
 
   const createMessage = useAction(api.public.messages.create);
 
-  const onSubmit = async (values: FormType) => {
+  const onSubmit = async (values: MessageFormValues) => {
     if(!conversation || !contactSessionId) {
       return;
     }

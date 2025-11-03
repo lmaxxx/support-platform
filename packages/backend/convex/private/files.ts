@@ -11,6 +11,7 @@ import rag from "../system/ai/rag";
 import {Id} from "../_generated/dataModel";
 import {paginationOptsValidator} from "convex/server";
 import {internal} from "../_generated/api";
+import {requireAuth} from "../lib/auth";
 
 function guessMimeType(filename: string, bytes: ArrayBuffer): string {
   return (
@@ -28,23 +29,7 @@ export const addFile = action({
     category: v.optional(v.string())
   },
   handler: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity();
-
-    if (!identity) {
-      throw new ConvexError({
-        code: "UNAUTHORIZED",
-        message: "Identity not found"
-      })
-    }
-
-    const organizationId = identity.org_id as string
-
-    if (!organizationId) {
-      throw new ConvexError({
-        code: "NOT_FOUND",
-        message: "Organization not found"
-      })
-    }
+    const { organizationId } = await requireAuth(ctx);
 
     const subscription = await ctx.runQuery(
       internal.system.subscriptions.getByOrganizationId,
@@ -101,23 +86,7 @@ export const deleteFile = mutation({
     entryId: vEntryId
   },
   handler: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity();
-
-    if (!identity) {
-      throw new ConvexError({
-        code: "UNAUTHORIZED",
-        message: "Identity not found"
-      })
-    }
-
-    const organizationId = identity.org_id as string
-
-    if (!organizationId) {
-      throw new ConvexError({
-        code: "NOT_FOUND",
-        message: "Organization not found"
-      })
-    }
+    const { organizationId } = await requireAuth(ctx);
 
     const namespace = await rag.getNamespace(ctx, { namespace: organizationId })
 
@@ -162,23 +131,7 @@ export const list = query({
     paginationOpts: paginationOptsValidator,
   },
   handler: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity();
-
-    if (!identity) {
-      throw new ConvexError({
-        code: "UNAUTHORIZED",
-        message: "Identity not found"
-      })
-    }
-
-    const organizationId = identity.org_id as string
-
-    if (!organizationId) {
-      throw new ConvexError({
-        code: "NOT_FOUND",
-        message: "Organization not found"
-      })
-    }
+    const { organizationId } = await requireAuth(ctx);
 
     const namespace = await rag.getNamespace(ctx, {
       namespace: organizationId

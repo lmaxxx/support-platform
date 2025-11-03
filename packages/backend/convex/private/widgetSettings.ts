@@ -1,28 +1,13 @@
 import {mutation, query} from "../_generated/server";
 import {ConvexError, v} from "convex/values";
+import {requireAuth} from "../lib/auth";
 
 export const getOne = query({
   args: {
 
   },
   handler: async (ctx) => {
-    const identity = await ctx.auth.getUserIdentity();
-
-    if (!identity) {
-      throw new ConvexError({
-        code: "UNAUTHORIZED",
-        message: "Identity not found"
-      })
-    }
-
-    const organizationId = identity.org_id as string
-
-    if (!organizationId) {
-      throw new ConvexError({
-        code: "NOT_FOUND",
-        message: "Organization not found"
-      })
-    }
+    const { organizationId } = await requireAuth(ctx);
 
     return await ctx.db
       .query("widgetSettings")
@@ -45,23 +30,7 @@ export const upsert = mutation({
     })
   },
   handler: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity();
-
-    if (!identity) {
-      throw new ConvexError({
-        code: "UNAUTHORIZED",
-        message: "Identity not found"
-      })
-    }
-
-    const organizationId = identity.org_id as string
-
-    if (!organizationId) {
-      throw new ConvexError({
-        code: "NOT_FOUND",
-        message: "Organization not found"
-      })
-    }
+    const { organizationId } = await requireAuth(ctx);
 
     const existingWidgetSettings = await ctx.db
       .query("widgetSettings")

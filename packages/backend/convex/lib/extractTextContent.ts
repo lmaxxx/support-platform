@@ -3,11 +3,12 @@ import {Id} from "../_generated/dataModel";
 import {StorageActionWriter} from "convex/server";
 import {assert} from "convex-helpers";
 import {generateText} from "ai";
+import {AI_MODEL} from "../constants";
 
 const AI_MODELS = {
-  image: anthropic.languageModel("claude-4-sonnet-20250514"),
-  pdf: anthropic.languageModel("claude-4-sonnet-20250514"),
-  html: anthropic.languageModel("claude-4-sonnet-20250514")
+  image: anthropic.languageModel(AI_MODEL.CLAUDE_SONNET),
+  pdf: anthropic.languageModel(AI_MODEL.CLAUDE_SONNET),
+  html: anthropic.languageModel(AI_MODEL.CLAUDE_SONNET)
 } as const;
 
 const SUPPORTED_IMAGE_TYPES = [
