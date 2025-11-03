@@ -5,9 +5,9 @@ import {useAction, useMutation, useQuery} from "convex/react";
 import {api} from "@workspace/backend/convex/_generated/api";
 import {Button} from "@workspace/ui/components/button";
 import {LoaderIcon, MoreHorizontalIcon, Wand2Icon} from "lucide-react";
-import {z} from "zod";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
+import {messageFormSchema, MessageFormValues} from "@workspace/ui/lib/schemas";
 import {toUIMessages, useThreadMessages} from "@convex-dev/agent/react";
 import {AIConversation, AIConversationContent} from "@workspace/ui/components/ai/conversation";
 import {AIMessage, AIMessageContent} from "@workspace/ui/components/ai/message";
@@ -35,12 +35,6 @@ type Props = {
   conversationId: Id<"conversations">
 }
 
-const formSchema = z.object({
-  message: z.string().min(1, "Message is required")
-})
-
-type FormType = z.infer<typeof formSchema>;
-
 export default function ConversationIdView({conversationId}: Props) {
   const conversation = useQuery(api.private.conversations.getOne, {
     conversationId
@@ -58,8 +52,8 @@ export default function ConversationIdView({conversationId}: Props) {
     loadSize: 10
   })
 
-  const form = useForm<FormType>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<MessageFormValues>({
+    resolver: zodResolver(messageFormSchema),
     defaultValues: {
       message: ""
     }
@@ -86,7 +80,7 @@ export default function ConversationIdView({conversationId}: Props) {
 
   const createMessage = useMutation(api.private.messages.create)
 
-  const onSubmit = async (values: FormType) => {
+  const onSubmit = async (values: MessageFormValues) => {
     try {
       await createMessage({ conversationId, prompt: values.message })
       form.reset()

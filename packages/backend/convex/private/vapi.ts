@@ -3,27 +3,12 @@ import {ConvexError} from "convex/values";
 import {internal} from "../_generated/api";
 import {getSecretValue, parseSecretString} from "../lib/secrets";
 import {Vapi, VapiClient} from "@vapi-ai/server-sdk";
+import {requireAuth} from "../lib/auth";
 
 export const getPhoneNumbers = action({
   args: {},
   handler: async (ctx): Promise<Vapi.PhoneNumbersListResponseItem[]> => {
-    const identity = await ctx.auth.getUserIdentity();
-
-    if (!identity) {
-      throw new ConvexError({
-        code: "UNAUTHORIZED",
-        message: "Identity not found"
-      })
-    }
-
-    const organizationId = identity.org_id as string
-
-    if (!organizationId) {
-      throw new ConvexError({
-        code: "NOT_FOUND",
-        message: "Organization not found"
-      })
-    }
+    const { organizationId } = await requireAuth(ctx);
 
     const plugin = await ctx.runQuery(
       internal.system.plugins.getByOrganizationIdAndService,
@@ -72,23 +57,7 @@ export const getPhoneNumbers = action({
 export const getAssistants = action({
   args: {},
   handler: async (ctx): Promise<Vapi.Assistant[]> => {
-    const identity = await ctx.auth.getUserIdentity();
-
-    if (!identity) {
-      throw new ConvexError({
-        code: "UNAUTHORIZED",
-        message: "Identity not found"
-      })
-    }
-
-    const organizationId = identity.org_id as string
-
-    if (!organizationId) {
-      throw new ConvexError({
-        code: "NOT_FOUND",
-        message: "Organization not found"
-      })
-    }
+    const { organizationId } = await requireAuth(ctx);
 
     const plugin = await ctx.runQuery(
       internal.system.plugins.getByOrganizationIdAndService,

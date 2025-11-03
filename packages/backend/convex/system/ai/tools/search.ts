@@ -6,6 +6,7 @@ import {generateText} from "ai";
 import {anthropic} from "@ai-sdk/anthropic";
 import {supportAgent} from "../agents/supportAgent";
 import {SEARCH_INTERPRETER_PROMPT} from "../constants";
+import {AI_MODEL} from "../../../constants";
 
 
 export const search = createTool({
@@ -52,7 +53,7 @@ export const search = createTool({
           content: `User asked "${args.query}"\n\nSearch results: ${contextText}`
         }
       ],
-      model: anthropic("claude-4-sonnet-20250514")
+      model: anthropic(AI_MODEL.CLAUDE_SONNET)
     })
 
     await supportAgent.saveMessage(ctx, {
