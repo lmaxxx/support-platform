@@ -3,10 +3,11 @@ import {httpAction} from "./_generated/server";
 import {Webhook} from "svix";
 import {createClerkClient, WebhookEvent} from "@clerk/backend";
 import {internal} from "./_generated/api";
+import {requireEnv} from "./lib/env";
 
 const http = httpRouter();
 const clerkClient = createClerkClient({
-  secretKey: process.env.CLERK_SECRET_KEY || "",
+  secretKey: requireEnv("CLERK_SECRET_KEY"),
 });
 
 http.route({
@@ -48,7 +49,11 @@ http.route({
         break
       }
       default:
-        console.log("Ignored Clerk webhook event", event.type)
+        // Log ignored webhook events for monitoring
+        console.log("Ignored Clerk webhook event", {
+          eventType: event.type,
+          timestamp: new Date().toISOString()
+        });
     }
 
     return new Response(null, {status: 200})
@@ -64,12 +69,20 @@ async function validateRequest(req: Request): Promise<WebhookEvent | null> {
     "svix-signature": req.headers.get("svix-signature") || "",
   }
 
-  const webhook = new Webhook(process.env.CLERK_WEBHOOK_SECRET || "");
+  const webhook = new Webhook(requireEnv("CLERK_WEBHOOK_SECRET"));
 
   try {
     return webhook.verify(payloadString, svixHeaders) as WebhookEvent
-  } catch {
-    // Invalid webhook signature
+  } catch (error) {
+    // Invalid webhook signature - log for security monitoring
+    console.error("Webhook signature verification failed", {
+      error: error instanceof Error ? error.message : String(error),
+      headers: {
+        hasSvixId: !!svixHeaders["svix-id"],
+        hasSvixTimestamp: !!svixHeaders["svix-timestamp"],
+        hasSvixSignature: !!svixHeaders["svix-signature"],
+      }
+    });
     return null;
   }
 }

@@ -1,6 +1,18 @@
 import { EMBED_CONFIG } from './config';
 import { chatBubbleIcon, closeIcon } from './icons';
 
+// Declare global Window interface for EchoWidget
+declare global {
+  interface Window {
+    EchoWidget: {
+      init: (config: {organizationId?: string; position?: 'bottom-right' | 'bottom-left'}) => void;
+      show: () => void;
+      hide: () => void;
+      destroy: () => void;
+    };
+  }
+}
+
 (function() {
   let iframe: HTMLIFrameElement | null = null;
   let container: HTMLDivElement | null = null;
@@ -32,6 +44,12 @@ import { chatBubbleIcon, closeIcon } from './icons';
   // Exit if no organization ID
   if (!organizationId) {
     console.error('Echo Widget: data-organization-id attribute is required');
+    return;
+  }
+
+  // Validate organization ID format
+  if (!organizationId.startsWith('org_') || !/^org_[a-zA-Z0-9]+$/.test(organizationId)) {
+    console.error('Echo Widget: Invalid organization ID format. Must start with "org_" followed by alphanumeric characters.');
     return;
   }
 
@@ -210,7 +228,7 @@ import { chatBubbleIcon, closeIcon } from './icons';
   }
 
   // Expose API to global scope
-  (window as any).EchoWidget = {
+  window.EchoWidget = {
     init: reinit,
     show,
     hide,

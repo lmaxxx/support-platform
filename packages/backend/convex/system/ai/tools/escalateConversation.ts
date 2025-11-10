@@ -1,10 +1,9 @@
 import {createTool} from "@convex-dev/agent";
 import {z} from "zod";
 import {internal} from "../../../_generated/api";
-import {supportAgent} from "../agents/supportAgent";
 
 export const escalateConversation = createTool({
-  description: "Resolve a conversation",
+  description: "Escalate a conversation to a human operator",
   args: z.object({}),
   handler: async (ctx) => {
     if(!ctx.threadId) {

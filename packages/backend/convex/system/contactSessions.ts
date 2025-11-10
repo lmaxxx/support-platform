@@ -47,3 +47,35 @@ export const getOne = internalQuery({
     return await ctx.db.get(args.contactSessionId)
   }
 })
+
+/**
+ * Cleanup expired contact sessions
+ * Runs hourly via cron job to maintain database hygiene and privacy
+ */
+export const cleanupExpiredSessions = internalMutation({
+  args: {},
+  handler: async (ctx) => {
+    const now = Date.now();
+
+    // Find all expired sessions using the expiresAt index
+    const expiredSessions = await ctx.db
+      .query("contactSessions")
+      .withIndex("by_expires_at")
+      .filter(q => q.lt(q.field("expiresAt"), now))
+      .collect();
+
+    // Delete expired sessions in batches
+    let deletedCount = 0;
+    for (const session of expiredSessions) {
+      await ctx.db.delete(session._id);
+      deletedCount++;
+    }
+
+    console.log(`Cleaned up ${deletedCount} expired contact sessions`);
+
+    return {
+      deletedCount,
+      timestamp: now
+    };
+  }
+})

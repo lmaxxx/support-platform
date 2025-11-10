@@ -1,6 +1,8 @@
-import {mutation} from "../_generated/server";
+import {mutation, query} from "../_generated/server";
 import {v} from "convex/values";
 import {SESSION_DURATION_MS} from "../constants";
+import {checkRateLimit, RateLimits} from "../lib/rateLimit";
+import {validateEmail, validateOrganizationId} from "../lib/validation";
 
 export const create = mutation({
   args: {
@@ -23,6 +25,14 @@ export const create = mutation({
     }))
   },
   handler: async (ctx, args) => {
+    // Validate inputs
+    validateEmail(args.email);
+    validateOrganizationId(args.organizationId);
+
+    // Rate limit check: 5 sessions per 5 minutes per email
+    const rateLimitKey = `${args.organizationId}:${args.email}`;
+    checkRateLimit(rateLimitKey, RateLimits.SESSION_CREATION);
+
     const now = Date.now()
     const expiresAt = now + SESSION_DURATION_MS;
 
@@ -36,7 +46,11 @@ export const create = mutation({
   }
 })
 
-export const validate = mutation({
+/**
+ * Validate a contact session (read-only operation)
+ * Converted to query for proper read-only semantics
+ */
+export const validate = query({
   args: {
     contactSessionId: v.id("contactSessions")
   },

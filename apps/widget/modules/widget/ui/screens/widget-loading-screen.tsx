@@ -33,7 +33,7 @@ export default function WidgetLoadingScreen({organizationId}: Props) {
 
   const contactSessionId = useAtomValue(contactSessionIdAtomFamily(organizationId || ""))
 
-  const validateOrganization = useAction(api.public.organizations.valiadte)
+  const validateOrganization = useAction(api.public.organizations.validate)
 
   // Step 1: validate organization
   useEffect(() => {
@@ -76,8 +76,12 @@ export default function WidgetLoadingScreen({organizationId}: Props) {
   ])
 
 
-  const validateContactSession = useMutation(api.public.contactSessions.validate)
-  // Step 2: Validate session
+  // Step 2: Validate session (using query for read-only operation)
+  const sessionValidation = useQuery(
+    api.public.contactSessions.validate,
+    contactSessionId && step === "session" ? { contactSessionId } : "skip"
+  );
+
   useEffect(() => {
     if(step !== "session") {
       return;
@@ -93,16 +97,12 @@ export default function WidgetLoadingScreen({organizationId}: Props) {
 
     setLoadingMessage("Validating session...");
 
-    validateContactSession({contactSessionId}).then((result) => {
-      setSessionValid(result.valid);
+    if(sessionValidation !== undefined) {
+      setSessionValid(sessionValidation.valid);
       setStep("settings")
-    })
-      .catch(() => {
-        setSessionValid(false);
-        setStep("settings")
-      })
+    }
 
-  }, [step, contactSessionId, validateContactSession, setLoadingMessage]);
+  }, [step, contactSessionId, sessionValidation, setLoadingMessage, setStep]);
 
   //Step 3: Load widget settings
 
