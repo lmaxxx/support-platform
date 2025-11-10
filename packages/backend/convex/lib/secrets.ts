@@ -4,13 +4,14 @@ import {
   ResourceExistsException,
   SecretsManagerClient
 } from "@aws-sdk/client-secrets-manager";
+import {requireEnv} from "./env";
 
 export function createSecretManagerClient () {
   return new SecretsManagerClient({
-    region: process.env.AWS_REGION,
+    region: requireEnv("AWS_REGION"),
     credentials: {
-      accessKeyId: process.env.AWS_ACCESS_KEY_ID || "",
-      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || "",
+      accessKeyId: requireEnv("AWS_ACCESS_KEY_ID"),
+      secretAccessKey: requireEnv("AWS_SECRET_ACCESS_KEY"),
     }
   })
 }
@@ -44,14 +45,19 @@ export async function upsertSecret(secretName: string, secretValue: Record<strin
   }
 }
 
-export function parseSecretString<T = Record<string, unknown>>(secret: GetSecretValueCommandOutput) {
+export function parseSecretString<T = Record<string, unknown>>(secret: GetSecretValueCommandOutput, secretName?: string) {
   if(!secret.SecretString) {
     return null;
   }
 
   try {
     return JSON.parse(secret.SecretString) as T;
-  } catch {
+  } catch (error) {
+    // Log parse failure for debugging (never log actual secret value)
+    console.error("Failed to parse secret string", {
+      secretName: secretName || "unknown",
+      error: error instanceof Error ? error.message : String(error),
+    });
     return null;
   }
 }

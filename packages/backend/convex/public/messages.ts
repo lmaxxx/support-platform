@@ -7,6 +7,7 @@ import {resolveConversation} from "../system/ai/tools/resolveConversation";
 import {escalateConversation} from "../system/ai/tools/escalateConversation";
 import {saveMessage} from "@convex-dev/agent";
 import {search} from "../system/ai/tools/search";
+import {checkRateLimit, RateLimits} from "../lib/rateLimit";
 
 export const create = action({
   args: {
@@ -15,6 +16,9 @@ export const create = action({
     contactSessionId: v.id("contactSessions")
   },
   handler: async (ctx, args) => {
+    // Rate limit check: 10 messages per minute per session
+    checkRateLimit(args.contactSessionId, RateLimits.MESSAGE_CREATION);
+
     const contactSession = await ctx.runQuery(internal.system.contactSessions.getOne, {
       contactSessionId: args.contactSessionId
     })

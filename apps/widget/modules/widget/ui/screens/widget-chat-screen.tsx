@@ -97,7 +97,7 @@ export default function WidgetChatScreen() {
   return (
     <>
       <WidgetHeader className={"flex items-center justify-between"}>
-        <div className={"flex items-center gapx-x-2"}>
+        <div className={"flex items-center gap-x-2"}>
           <Button onClick={onBack} size={"icon"} variant={"transparent"}>
             <ArrowLeftIcon/>
           </Button>

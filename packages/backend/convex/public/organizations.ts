@@ -1,12 +1,13 @@
 import {action} from "../_generated/server";
 import {v} from "convex/values";
 import {createClerkClient} from "@clerk/backend";
+import {requireEnv} from "../lib/env";
 
 const clerkClient = createClerkClient({
-  secretKey: process.env.CLERK_SECRET_KEY || ""
+  secretKey: requireEnv("CLERK_SECRET_KEY")
 })
 
-export const valiadte = action({
+export const validate = action({
   args: {
     organizationId: v.string(),
   },

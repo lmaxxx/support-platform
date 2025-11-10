@@ -70,7 +70,7 @@ export const addFile = action({
     })
 
     if(!created) {
-      console.debug("Entry already exists, skipping upload metadata");
+      // Entry already exists - delete duplicate storage and reuse existing entry
       await ctx.storage.delete(storageId)
     }
 
@@ -192,8 +192,13 @@ async function convertEntryToPublicFile(ctx: QueryCtx, entry: Entry): Promise<Pu
       if(storageMetadata) {
         fileSize = formatFileSize(storageMetadata.size)
       }
-    } catch {
-      // Silently handle - metadata fetch is non-critical
+    } catch (error) {
+      // Log error for debugging - metadata fetch is non-critical to user experience
+      console.error("Failed to fetch storage metadata", {
+        storageId,
+        entryId: entry.entryId,
+        error: error instanceof Error ? error.message : String(error),
+      });
     }
   }
 
